@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{B22B4C10-01F1-4AD3-9973-4A7DC68E6972}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>PEReader</RootNamespace>
+    <AssemblyName>PEReader</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup>
+    <OutputPath>$(SolutionDir)\bin\$(Configuration)\</OutputPath>
+    <DocumentationFile>bin\Debug\PEResEnum.XML</DocumentationFile>
+    <WarningLevel>4</WarningLevel>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <RunCodeAnalysis>true</RunCodeAnalysis>
+    <CodeAnalysisRuleSet>ExtendedCorrectnessRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ClrMetadata\ClrBlobPool.cs" />
+    <Compile Include="ClrMetadata\ClrConstants.cs" />
+    <Compile Include="ClrMetadata\ClrExtensionMethods.cs" />
+    <Compile Include="ClrMetadata\ClrAttributeEnums.cs" />
+    <Compile Include="ClrMetadata\ClrGuidPool.cs" />
+    <Compile Include="ClrMetadata\ClrMetadataAccessor.cs" />
+    <Compile Include="ClrMetadata\ClrStringPool.cs" />
+    <Compile Include="ClrMetadata\ClrType.cs" />
+    <Compile Include="ClrMetadata\ClrUserStringPool.cs" />
+    <Compile Include="ClrMetadata\CoreCLR\CMiniMdBase.cs" />
+    <Compile Include="ClrMetadata\CoreCLR\CMiniMdSchema.cs" />
+    <Compile Include="ClrMetadata\CoreCLR\CMiniMdSchemaBase.cs" />
+    <Compile Include="ClrMetadata\CoreCLR\MetaModelDefs.cs" />
+    <Compile Include="ClrMetadata\CoreCLR\MetaModel.cs" />
+    <Compile Include="ClrMetadata\MetadataCache.cs" />
+    <Compile Include="ClrMetadata\MetadataTable.cs" />
+    <Compile Include="ClrMetadata\MetadataTableBase.cs" />
+    <Compile Include="ClrMetadata\Native\STORAGEHEADER.cs" />
+    <Compile Include="ClrMetadata\Native\STORAGESIGNATURE.cs" />
+    <Compile Include="ClrMetadata\Native\STORAGESTREAM.cs" />
+    <Compile Include="ClrMetadata\PeDotNetInformation.cs" />
+    <Compile Include="ClrMetadata\PublicEnums.cs" />
+    <Compile Include="IBlob.cs" />
+    <Compile Include="ImportModule.cs" />
+    <Compile Include="ImportedSymbol.cs" />
+    <Compile Include="IPeImportData.cs" />
+    <Compile Include="ClrMetadata\Native\IMAGE_COR20_HEADER.cs" />
+    <Compile Include="Pe32Headers.cs" />
+    <Compile Include="Pe64Headers.cs" />
+    <Compile Include="ExportedSymbol.cs" />
+    <Compile Include="Native\IMAGE_IMPORT_DESCRIPTOR.cs" />
+    <Compile Include="Native\IMAGE_THUNK_DATA32.cs" />
+    <Compile Include="Native\IMAGE_THUNK_DATA64.cs" />
+    <Compile Include="Pe64ImportData.cs" />
+    <Compile Include="PeExportData.cs" />
+    <Compile Include="IPeHeadersInternal.cs" />
+    <Compile Include="Native\IMAGE_EXPORT_DIRECTORY.cs" />
+    <Compile Include="Pe32ImportData.cs" />
+    <Compile Include="PeResources.cs" />
+    <Compile Include="ExtensionMethods.cs" />
+    <Compile Include="IPeHeaders.cs" />
+    <Compile Include="Native\IMAGE_DATA_DIRECTORY.cs" />
+    <Compile Include="Native\IMAGE_DOS_HEADER.cs" />
+    <Compile Include="Native\IMAGE_FILE_HEADER.cs" />
+    <Compile Include="Native\IMAGE_NT_HEADERS32.cs" />
+    <Compile Include="Native\IMAGE_NT_HEADERS64.cs" />
+    <Compile Include="Native\IMAGE_OPTIONAL_HEADER32.cs" />
+    <Compile Include="Native\IMAGE_OPTIONAL_HEADER64.cs" />
+    <Compile Include="Native\IMAGE_RESOURCE_DATA_ENTRY.cs" />
+    <Compile Include="Native\IMAGE_RESOURCE_DIRECTORY.cs" />
+    <Compile Include="Native\IMAGE_RESOURCE_DIRECTORY_ENTRY.cs" />
+    <Compile Include="Native\IMAGE_SECTION_HEADER.cs" />
+    <Compile Include="Native\NativeConstants.cs" />
+    <Compile Include="PeFile.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="PublicEnums.cs" />
+    <Compile Include="SortedList.cs" />
+    <Compile Include="TypedArrayEnumerator.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

@@ -1,0 +1,525 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ClrMetaModelSchema major-version="2" minor-version="1">
+  <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <xs:simpleType name="identifier">
+      <xs:restriction base="xs:string">
+        <xs:pattern value="[A-Za-z_][A-Za-z0-9_]*" />
+      </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="identifierOr0">
+      <xs:restriction base="xs:string">
+        <xs:pattern value="0|([A-Za-z_][A-Za-z0-9_]*)" />
+      </xs:restriction>
+    </xs:simpleType>
+
+    <xs:simpleType name="itemType">
+      <xs:restriction base="xs:string">
+        <xs:enumeration value="RidMax" />
+        <xs:enumeration value="CodedToken" />
+        <xs:enumeration value="CodedTokenMax" />
+        <xs:enumeration value="SHORT" />
+        <xs:enumeration value="USHORT" />
+        <xs:enumeration value="LONG" />
+        <xs:enumeration value="ULONG" />
+        <xs:enumeration value="BYTE" />
+        <xs:enumeration value="STRING" />
+        <xs:enumeration value="GUID" />
+        <xs:enumeration value="BLOB" />
+      </xs:restriction>
+    </xs:simpleType>
+
+    <!-- TODO: can I just restrict this to names in CodedToken elements? Same for table names? -->
+    <xs:simpleType name="codedToken">
+      <xs:restriction base="xs:string">
+          <xs:enumeration value="TypeDefOrRef" />
+          <xs:enumeration value="HasConstant" />
+          <xs:enumeration value="HasCustomAttribute" />
+          <xs:enumeration value="HasFieldMarshal" />
+          <xs:enumeration value="HasDeclSecurity" />
+          <xs:enumeration value="MemberRefParent" />
+          <xs:enumeration value="HasSemantic" />
+          <xs:enumeration value="MethodDefOrRef" />
+          <xs:enumeration value="MemberForwarded" />
+          <xs:enumeration value="Implementation" />
+          <xs:enumeration value="CustomAttributeType" />
+          <xs:enumeration value="ResolutionScope" />
+          <xs:enumeration value="TypeOrMethodDef" />
+      </xs:restriction>
+    </xs:simpleType>
+    
+    <xs:element name="Table">
+      <xs:complexType>
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+
+          <xs:element name="NoFixed" minOccurs="0" maxOccurs="1" >
+            <!-- Indicates there are no fixed sized fields in the table (Item elements) -->
+          </xs:element>
+
+          <xs:choice>
+            <xs:element name="Item">
+              <xs:complexType>
+                <xs:attribute name="type" type="itemType" use="required" />
+                <xs:attribute name="name" type="identifier" use="required" />
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="RidItem">
+              <xs:complexType>
+                <xs:attribute name="name" type="identifier" use="required" />
+                <xs:attribute name="table" type="identifier" use="required" />
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="StringItem">
+              <xs:complexType>
+                <xs:attribute name="name" type="identifier" use="required" />
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="GuidItem">
+              <xs:complexType>
+                <xs:attribute name="name" type="identifier" use="required" />
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="BlobItem">
+              <xs:complexType>
+                <xs:attribute name="name" type="identifier" use="required" />
+              </xs:complexType>
+            </xs:element>
+
+            <xs:element name="CodedTokenItem">
+              <xs:complexType>
+                <xs:attribute name="name" type="identifier" use="required" />
+                <xs:attribute name="tokens" type="codedToken" use="required" />
+              </xs:complexType>
+            </xs:element>
+          </xs:choice>
+          
+        </xs:sequence>
+
+        <xs:attribute name="name" type="identifier" use="required" />
+        <xs:attribute name="key" type="identifier" use="optional" />
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="CodedToken">
+      <xs:complexType>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+          <xs:element name="Table" type="identifierOr0" />
+        </xs:sequence>
+        <xs:attribute name="name" type="codedToken" use="required" />
+      </xs:complexType>
+    </xs:element>
+
+    <xs:element name="ClrMetaModelSchema">
+      <xs:complexType>
+        <xs:sequence minOccurs="1" maxOccurs="unbounded">
+          <xs:choice>
+            <xs:element ref="Table" />
+            <xs:element ref="CodedToken" />
+          </xs:choice>
+        </xs:sequence>
+        
+        <xs:attribute name="major-version" type="xs:int" />
+        <xs:attribute name="minor-version" type="xs:int" />
+      </xs:complexType>
+    </xs:element>
+    
+  </xs:schema>
+
+
+  <!-- Coded Tokens -->
+
+  <CodedToken name="TypeDefOrRef">
+    <Table>TypeDef</Table>
+    <Table>TypeRef</Table>
+    <Table>TypeSpec</Table>
+  </CodedToken>
+
+  <CodedToken name="HasConstant">
+    <Table>FieldDef</Table>
+    <Table>ParamDef</Table>
+    <Table>Property</Table>
+  </CodedToken>
+
+  <CodedToken name="HasCustomAttribute">
+    <Table>MethodDef</Table>
+    <Table>FieldDef</Table>
+    <Table>TypeRef</Table>
+    <Table>TypeDef</Table>
+    <Table>ParamDef</Table>
+    <Table>InterfaceImpl</Table>
+    <Table>MemberRef</Table>
+    <Table>Module</Table>
+    <Table>Permission</Table>
+    <Table>Property</Table>
+    <Table>Event</Table>
+    <Table>Signature</Table>
+    <Table>ModuleRef</Table>
+    <Table>TypeSpec</Table>
+    <Table>Assembly</Table>
+    <Table>AssemblyRef</Table>
+    <Table>File</Table>
+    <Table>ExportedType</Table>
+    <Table>ManifestResource</Table>
+    <Table>GenericParam</Table>
+    <Table>GenericParamConstraint</Table>
+    <Table>MethodSpec</Table>
+  </CodedToken>
+
+  <CodedToken name="HasFieldMarshal">
+    <Table>FieldDef</Table>
+    <Table>ParamDef</Table>
+  </CodedToken>
+
+  <CodedToken name="HasDeclSecurity">
+    <Table>TypeDef</Table>
+    <Table>MethodDef</Table>
+    <Table>Assembly</Table>
+  </CodedToken>
+
+  <CodedToken name="MemberRefParent">
+    <Table>TypeDef</Table>
+    <Table>TypeRef</Table>
+    <Table>ModuleRef</Table>
+    <Table>MethodDef</Table>
+    <Table>TypeSpec</Table>
+  </CodedToken>
+
+  <CodedToken name="HasSemantic">
+    <Table>Event</Table>
+    <Table>Property</Table>
+  </CodedToken>
+
+  <CodedToken name="MethodDefOrRef">
+    <Table>MethodDef</Table>
+    <Table>MemberRef</Table>
+  </CodedToken>
+
+  <CodedToken name="MemberForwarded">
+    <Table>FieldDef</Table>
+    <Table>MethodDef</Table>
+  </CodedToken>
+
+  <CodedToken name="Implementation">
+    <Table>File</Table>
+    <Table>AssemblyRef</Table>
+    <Table>ExportedType</Table>
+  </CodedToken>
+
+  <CodedToken name="CustomAttributeType">
+    <Table>0</Table>
+    <Table>0</Table>
+    <Table>MethodDef</Table>
+    <Table>MemberRef</Table>
+    <Table>0</Table>
+  </CodedToken>
+
+  <CodedToken name="ResolutionScope">
+    <Table>Module</Table>
+    <Table>ModuleRef</Table>
+    <Table>AssemblyRef</Table>
+    <Table>TypeRef</Table>
+  </CodedToken>
+
+  <CodedToken name="TypeOrMethodDef">
+    <Table>TypeDef</Table>
+    <Table>MethodDef</Table>
+  </CodedToken>
+
+
+  <!-- Tables -->
+  
+  <Table name="Module">
+    <Item type="USHORT" name="Generation" />
+    <StringItem name="Name" />
+    <GuidItem name="Mvid" />
+    <GuidItem name="EncId" />
+    <GuidItem name="EncBaseId" />
+  </Table>
+
+  <Table name="TypeRef">
+    <CodedTokenItem name="ResolutionScope" tokens="ResolutionScope" />
+    <StringItem name="Name" />
+    <StringItem name="Namespace" />
+  </Table>
+
+  <Table name="TypeDef">
+    <Item type="ULONG" name="Flags" />
+    <StringItem name="Name" />
+    <StringItem name="Namespace" />
+    <CodedTokenItem name="Extends" tokens="TypeDefOrRef" />
+    <RidItem name="FieldList" table="Field" />
+    <RidItem name="MethodList" table="Method" />
+  </Table>
+
+  <Table name="FieldPtr">
+    <NoFixed />
+    <RidItem name="Field" table="Field" />
+  </Table>
+
+  <Table name="Field">
+    <Item type="USHORT" name="Flags" />
+    <StringItem name="Name" />
+    <BlobItem name="Signature" />
+  </Table>
+
+  <Table name="MethodPtr">
+    <NoFixed />
+    <RidItem name="Method" table="Method" />
+  </Table>
+
+  <Table name="Method">
+    <Item type="ULONG" name="RVA" />
+    <Item type="USHORT" name="ImplFlags" />
+    <Item type="USHORT" name="Flags" />
+    <StringItem name="Name" />
+    <BlobItem name="Signature" />
+    <RidItem name="ParamList" table="Param" />
+  </Table>
+
+  <Table name="ParamPtr">
+    <NoFixed />
+    <RidItem name="Param" table="Param" />
+  </Table>
+
+  <Table name="Param">
+    <Item type="USHORT" name="Flags" />
+    <Item type="USHORT" name="Sequence" />
+    <StringItem name="Name" />
+  </Table>
+
+  <Table name="InterfaceImpl" key="Class">
+    <RidItem name="Class" table="TypeDef" />
+    <CodedTokenItem name="Interface" tokens="TypeDefOrRef" />
+  </Table>
+
+  <Table name="MemberRef">
+    <NoFixed />
+    <CodedTokenItem name="Class" tokens="MemberRefParent" />
+    <StringItem name="Name" />
+    <BlobItem name="Signature" />
+  </Table>
+
+  <Table name="Constant" key="Parent">
+    <Item type="BYTE" name="Type" />
+    <CodedTokenItem name="Parent" tokens="HasConstant" />
+    <BlobItem name="Value" />
+  </Table>
+
+  <Table name="CustomAttribute" key="Parent">
+    <NoFixed />
+    <CodedTokenItem name="Parent" tokens="HasCustomAttribute" />
+    <CodedTokenItem name="Type" tokens="CustomAttributeType" />
+    <BlobItem name="Value" />
+  </Table>
+  
+  <Table name="FieldMarshal" key="Parent">
+    <NoFixed />
+    <CodedTokenItem name="Parent" tokens="HasFieldMarshal" />
+    <BlobItem name="NativeType" />
+  </Table>
+
+  <Table name="DeclSecurity" key="Parent">
+    <!-- NOTE: DeclSecurityRec has this as a USHORT - why the difference? A bug? -->
+    <Item type="SHORT" name="Action" />
+
+    <CodedTokenItem name="Parent" tokens="HasDeclSecurity" />
+    <BlobItem name="PermissionSet" />
+  </Table>
+
+  <Table name="ClassLayout" key="Parent">
+    <Item type="USHORT" name="PackingSize" />
+    <Item type="ULONG" name="ClassSize" />
+    <RidItem name="Parent" table="TypeDef" />
+  </Table>
+
+  <Table name="FieldLayout" key="Field">
+    <Item type="ULONG" name="OffSet" />
+    <RidItem name="Field" table="Field" />
+  </Table>
+  
+  <Table name="StandAloneSig">
+    <NoFixed />
+    <BlobItem name="Signature" />
+  </Table>
+
+  <Table name="EventMap">
+    <NoFixed />
+    <RidItem name="Parent" table="TypeDef" />
+    <RidItem name="EventList" table="Event" />
+  </Table>
+
+  <Table name="EventPtr">
+    <NoFixed />
+    <RidItem name="Event" table="Event" />
+  </Table>
+
+  <Table name="Event">
+    <Item type="USHORT" name="EventFlags" />
+    <StringItem name="Name" />
+    <CodedTokenItem name="EventType" tokens="TypeDefOrRef" />
+  </Table>
+
+  <Table name="PropertyMap">
+    <NoFixed />
+    <RidItem name="Parent" table="TypeDef" />
+    <RidItem name="PropertyList" table="Property" />
+  </Table>
+
+  <Table name="PropertyPtr">
+    <NoFixed />
+    <RidItem name="Property" table="Property" />
+  </Table>
+
+  <Table name="Property">
+    <Item type="USHORT" name="PropFlags" />
+    <StringItem name="Name" />
+    <BlobItem name="Type" />
+  </Table>
+
+  <Table name="MethodSemantics" key="Association">
+    <Item type="USHORT" name="Semantic" />
+    <RidItem name="Method" table="Method" />
+    <CodedTokenItem name="Association" tokens="HasSemantic" />
+  </Table>
+
+  <Table name="MethodImpl" key="Class">
+    <RidItem name="Class" table="TypeDef" />
+    <CodedTokenItem name="MethodBody" tokens="MethodDefOrRef" />
+    <CodedTokenItem name="MethodDeclaration" tokens="MethodDefOrRef" />
+  </Table>
+
+  <Table name="ModuleRef">
+    <NoFixed />
+    <StringItem name="Name" />
+  </Table>
+
+  <Table name="TypeSpec">
+    <NoFixed />
+    <BlobItem name="Signature" />
+  </Table>
+
+  <Table name="ENCLog">
+    <Item type="ULONG" name="Token" />
+    <Item type="ULONG" name="FuncCode" />
+  </Table>
+
+  <Table name="ImplMap" key="MemberForwarded">
+    <Item type="USHORT" name="MappingFlags" />
+    <CodedTokenItem name="MemberForwarded" tokens="MemberForwarded" />
+    <StringItem name="ImportName" />
+    <RidItem name="ImportScope" table="ModuleRef" />
+  </Table>
+
+  <Table name="ENCMap">
+    <Item type="ULONG" name="Token" />
+  </Table>
+
+  <Table name="FieldRVA" key="Field">
+    <Item type="ULONG" name="RVA" />
+    <RidItem name="Field" table="Field" />
+  </Table>
+
+  <Table name="Assembly">
+    <Item type="ULONG" name="HashAlgId" />
+    <Item type="USHORT" name="MajorVersion" />
+    <Item type="USHORT" name="MinorVersion" />
+    <Item type="USHORT" name="BuildNumber" />
+    <Item type="USHORT" name="RevisionNumber" />
+    <Item type="ULONG" name="Flags" />
+    <BlobItem name="PublicKey" />
+    <StringItem name="Name" />
+    <StringItem name="Locale" />
+  </Table>
+
+  <Table name="AssemblyProcessor">
+    <Item type="ULONG" name="Processor" />
+  </Table>
+
+  <Table name="AssemblyOS">
+    <Item type="ULONG" name="OSPlatformId" />
+    <Item type="ULONG" name="OSMajorVersion" />
+    <Item type="ULONG" name="OSMinorVersion" />
+  </Table>
+
+  <Table name="AssemblyRef">
+    <Item type="USHORT" name="MajorVersion" />
+    <Item type="USHORT" name="MinorVersion" />
+    <Item type="USHORT" name="BuildNumber" />
+    <Item type="USHORT" name="RevisionNumber" />
+    <Item type="ULONG" name="Flags" />
+    <BlobItem name="PublicKeyOrToken" />
+    <StringItem name="Name" />
+    <StringItem name="Locale" />
+    <BlobItem name="HashValue" />
+  </Table>
+
+  <Table name="AssemblyRefProcessor">
+    <Item type="ULONG" name="Processor" />
+    <RidItem name="AssemblyRef" table="AssemblyRef" />
+  </Table>
+
+  <Table name="AssemblyRefOS">
+    <Item type="ULONG" name="OSPlatformId" />
+    <Item type="ULONG" name="OSMajorVersion" />
+    <Item type="ULONG" name="OSMinorVersion" />
+    <RidItem name="AssemblyRef" table="AssemblyRef" />
+  </Table>
+
+  <Table name="File">
+    <Item type="ULONG" name="Flags" />
+    <StringItem name="Name" />
+    <BlobItem name="HashValue" />
+  </Table>
+
+  <Table name="ExportedType">
+    <Item type="ULONG" name="Flags" />
+    <Item type="ULONG" name="TypeDefId" />
+    <StringItem name="TypeName" />
+    <StringItem name="TypeNamespace" />
+    <CodedTokenItem name="Implementation" tokens="Implementation" />
+  </Table>
+
+  <Table name="ManifestResource">
+    <Item type="ULONG" name="Offset" />
+    <Item type="ULONG" name="Flags" />
+    <StringItem name="Name" />
+    <CodedTokenItem name="Implementation" tokens="Implementation" />
+  </Table>
+
+  <Table name="NestedClass" key="NestedClass">
+    <RidItem name="NestedClass" table="TypeDef" />
+    <RidItem name="EnclosingClass" table="TypeDef" />
+  </Table>
+
+  <Table name="GenericParam" key="Owner">
+    <Item type="USHORT" name="Number" />
+    <Item type="USHORT" name="Flags" />
+    <CodedTokenItem name="Owner" tokens="TypeOrMethodDef" />
+    <StringItem name="Name" />
+  </Table>
+
+  <Table name="GenericParamV1_1" key="Owner">
+    <Item type="USHORT" name="Number" />
+    <Item type="USHORT" name="Flags" />
+    <CodedTokenItem name="Owner" tokens="TypeOrMethodDef" />
+    <StringItem name="Name" />
+    <CodedTokenItem name="Kind" tokens="TypeDefOrRef" />
+  </Table>
+  
+  <Table name="MethodSpec">
+    <NoFixed />
+    <CodedTokenItem name="Method" tokens="MethodDefOrRef" />
+    <BlobItem name="Instantiation" />
+  </Table>
+
+  <Table name="GenericParamConstraint" key="Owner">
+    <RidItem name="Owner" table="GenericParam" />
+    <CodedTokenItem name="Constraint" tokens="TypeDefOrRef" />
+  </Table>
+  
+</ClrMetaModelSchema>
