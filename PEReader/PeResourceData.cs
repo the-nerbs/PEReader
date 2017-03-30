@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 
@@ -24,15 +25,23 @@ namespace PEReader
         /// <summary>
         /// Gets the locale ID of this resource entry.
         /// </summary>
-        public string LocaleId { get; }
+        public int LocaleId { get; }
 
         /// <summary>
         /// Gets the data of this resource entry.
         /// </summary>
         ReadOnlyCollection<byte> Data { get; }
 
+        /// <summary>
+        /// Gets a <see cref="CultureInfo"/> describing the locale of this resource entry.
+        /// </summary>
+        public CultureInfo Locale
+        {
+            get { return CultureInfo.GetCultureInfo(LocaleId); }
+        }
 
-        internal PeResourceData(string type, string name, string localeId, byte[] data)
+
+        internal PeResourceData(string type, string name, int localeId, byte[] data)
         {
             Type = type;
             Name = name;

@@ -170,7 +170,8 @@ namespace PEReader
                 var dataBytes = new byte[dataEntry.Size];
                 peStream.Read(dataBytes, 0, dataBytes.Length);
 
-                string type, name, localeId;
+                string type, name;
+                int localeId;
                 GetResourceInfo(dirEntry, out type, out name, out localeId);
 
                 int dataId = nextId++;
@@ -204,11 +205,11 @@ namespace PEReader
             }
         }
 
-        private void GetResourceInfo(ResDirectoryEntry dataEntry, out string type, out string name, out string localeId)
+        private void GetResourceInfo(ResDirectoryEntry dataEntry, out string type, out string name, out int localeId)
         {
             Debug.Assert(!dataEntry.IsSubdirectory, "attempted to get type/name/locale of resource directory node.");
 
-            localeId = dataEntry.name;
+            localeId = dataEntry.entry.Id;
 
             ResDirectory localeDir = _directories[dataEntry.ownerDirectory];
 
