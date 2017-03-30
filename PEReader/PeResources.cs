@@ -39,14 +39,14 @@ namespace PEReader
 
         private readonly Dictionary<int, ResDirectory> _directories = new Dictionary<int, ResDirectory>();
         private readonly Dictionary<int, ResDirectoryEntry> _entries = new Dictionary<int, ResDirectoryEntry>();
-        private readonly Dictionary<int, byte[]> _data = new Dictionary<int, byte[]>();
+        private readonly Dictionary<int, PeResourceData> _data = new Dictionary<int, PeResourceData>();
 
 
         internal PeResources(IMAGE_SECTION_HEADER sectionHeader, Stream peStream)
         {
             int nextId = RootId;
 
-            ReadDirectory(peStream, sectionHeader.VirtualAddress, sectionHeader.PointerToRawData, ref nextId);
+            ReadDirectory(peStream, sectionHeader.VirtualAddress, sectionHeader.PointerToRawData, NoLink, ref nextId);
         }
 
 
@@ -55,7 +55,7 @@ namespace PEReader
         /// </summary>
         /// <param name="type">The name of the type of resources to get.</param>
         /// <returns>A collection of byte arrays containing the resource data.</returns>
-        public IEnumerable<byte[]> GetResourcesOfType(string type)
+        public IEnumerable<PeResourceData> GetResourcesOfType(string type)
         {
             var root = _directories[RootId];
 
@@ -78,10 +78,13 @@ namespace PEReader
         }
 
 
-        private int ReadDirectory(Stream peStream, long virtualAddress, long baseOffset, ref int nextId)
+        private int ReadDirectory(Stream peStream, long virtualAddress, long baseOffset, int parentId, ref int nextId)
         {
             int dirId = nextId++;
             var dirInfo = new ResDirectory();
+            dirInfo.id = dirId;
+            dirInfo.parentEntry = parentId;
+
             _directories.Add(dirId, dirInfo);
 
             dirInfo.directory = peStream.Read<IMAGE_RESOURCE_DIRECTORY>();
@@ -95,6 +98,9 @@ namespace PEReader
                 int entryId = nextId++;
 
                 var dirEntry = new ResDirectoryEntry();
+                dirEntry.id = entryId;
+                dirEntry.ownerDirectory = dirId;
+
                 dirInfo.childMappings[i] = entryId;
                 dirEntry.entry = peStream.Read<IMAGE_RESOURCE_DIRECTORY_ENTRY>();
 
@@ -148,7 +154,7 @@ namespace PEReader
                 // note: offset from beginning of section.
                 peStream.Seek(baseOffset + dirEntry.entry.OffsetToDirectory, SeekOrigin.Begin);
 
-                dirEntry.child = ReadDirectory(peStream, virtualAddress, baseOffset, ref nextId);
+                dirEntry.child = ReadDirectory(peStream, virtualAddress, baseOffset, dirEntry.id, ref nextId);
             }
             else
             {
@@ -164,14 +170,17 @@ namespace PEReader
                 var dataBytes = new byte[dataEntry.Size];
                 peStream.Read(dataBytes, 0, dataBytes.Length);
 
+                string type, name, localeId;
+                GetResourceInfo(dirEntry, out type, out name, out localeId);
+
                 int dataId = nextId++;
-                _data.Add(dataId, dataBytes);
+                _data.Add(dataId, new PeResourceData(type, name, localeId, dataBytes));
                 dirEntry.child = dataId;
             }
         }
 
 
-        private IEnumerable<byte[]> GetAllChildDatas(ResDirectoryEntry entry)
+        private IEnumerable<PeResourceData> GetAllChildDatas(ResDirectoryEntry entry)
         {
             if (entry.IsSubdirectory)
             {
@@ -195,9 +204,28 @@ namespace PEReader
             }
         }
 
+        private void GetResourceInfo(ResDirectoryEntry dataEntry, out string type, out string name, out string localeId)
+        {
+            Debug.Assert(!dataEntry.IsSubdirectory, "attempted to get type/name/locale of resource directory node.");
+
+            localeId = dataEntry.name;
+
+            ResDirectory localeDir = _directories[dataEntry.ownerDirectory];
+
+            ResDirectoryEntry nameEntry = _entries[localeDir.parentEntry];
+            name = nameEntry.name;
+
+            ResDirectory nameDirectory = _directories[nameEntry.ownerDirectory];
+
+            ResDirectoryEntry typeEntry = _entries[nameDirectory.parentEntry];
+            type = typeEntry.name;
+        }
+
 
         private class ResDirectory
         {
+            public int id;
+            public int parentEntry;
             public IMAGE_RESOURCE_DIRECTORY directory;
             public int[] childMappings;
 
@@ -210,6 +238,8 @@ namespace PEReader
         [DebuggerDisplay("Entry: {name}")]
         private class ResDirectoryEntry
         {
+            public int id;
+            public int ownerDirectory;
             public IMAGE_RESOURCE_DIRECTORY_ENTRY entry;
             public string name;
             public int child;

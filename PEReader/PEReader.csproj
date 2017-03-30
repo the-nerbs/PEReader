@@ -81,6 +81,7 @@
     <Compile Include="IPeHeadersInternal.cs" />
     <Compile Include="Native\IMAGE_EXPORT_DIRECTORY.cs" />
     <Compile Include="Pe32ImportData.cs" />
+    <Compile Include="PeResourceData.cs" />
     <Compile Include="PeResources.cs" />
     <Compile Include="ExtensionMethods.cs" />
     <Compile Include="IPeHeaders.cs" />
